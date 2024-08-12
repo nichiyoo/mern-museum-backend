@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { handleDelete } = require('../libs/cloudinary');
 
 const CollectionSchema = new mongoose.Schema({
 	tahun: { type: Number, required: true },
@@ -42,10 +41,6 @@ const CollectionSchema = new mongoose.Schema({
 
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: Date.now },
-});
-
-CollectionSchema.pre('remove', async () => {
-	await handleDelete(this._id);
 });
 
 module.exports = mongoose.model('Collection', CollectionSchema);

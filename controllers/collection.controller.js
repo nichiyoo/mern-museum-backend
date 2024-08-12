@@ -1,4 +1,4 @@
-const { handleUpload } = require('../libs/cloudinary');
+const { handleUpload, handleDelete } = require('../libs/cloudinary');
 const Collection = require('../models/collection.model');
 
 const index = async (req, res) => {
@@ -125,6 +125,8 @@ const destroy = async (req, res) => {
 				message: 'Collection not found.',
 			});
 		}
+
+		await handleDelete(collection._id);
 
 		res.status(200).json({
 			message: 'Collection deleted successfully.',

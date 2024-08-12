@@ -38,7 +38,7 @@ const handleUpload = async (id, key, file) => {
 
 const handleDelete = async (id) => {
 	try {
-		await cloudinary.uploader.delete_resource_by_prefix(id);
+		await cloudinary.api.delete_resources_by_prefix(id);
 	} catch (error) {
 		console.log(error);
 	}
