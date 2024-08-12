@@ -38,7 +38,16 @@ const handleUpload = async (id, key, file) => {
 
 const handleDelete = async (id) => {
 	try {
-		await cloudinary.api.delete_resources_by_prefix(id);
+		await Promise.all([
+			cloudinary.api.delete_resources_by_prefix(id, {
+				resource_type: 'image',
+			}),
+			cloudinary.api.delete_resources_by_prefix(id, {
+				resource_type: 'video',
+			}),
+		]);
+
+		await cloudinary.api.delete_folder(id);
 	} catch (error) {
 		console.log(error);
 	}

@@ -119,14 +119,15 @@ const destroy = async (req, res) => {
 	try {
 		const { id } = req.params;
 
-		const collection = await Collection.findByIdAndDelete(id);
+		const collection = await Collection.findById(id);
 		if (!collection) {
 			return res.status(404).json({
 				message: 'Collection not found.',
 			});
 		}
 
-		await handleDelete(collection._id);
+		await handleDelete(collection._id.toString());
+		await Collection.findByIdAndDelete(id);
 
 		res.status(200).json({
 			message: 'Collection deleted successfully.',
