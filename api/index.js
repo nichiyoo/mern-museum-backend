@@ -7,7 +7,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const userRouter = require('../routes/user.routes');
-const ticketRouter = require('../routes/ticket.routes');
 const collectionRouter = require('../routes/collection.routes');
 
 const port = process.env.PORT || 3000;
@@ -24,7 +23,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRouter);
-app.use('/tickets', ticketRouter);
 app.use('/collections', collectionRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
