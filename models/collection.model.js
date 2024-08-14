@@ -14,30 +14,10 @@ const CollectionSchema = new mongoose.Schema({
 	deskripsi_id: { type: String },
 	deskripsi_sasak: { type: String },
 
-	image: {
-		width: { type: Number },
-		height: { type: Number },
-		url: { type: String },
-		public_id: { type: String },
-	},
-	audio_id: {
-		width: { type: Number },
-		height: { type: Number },
-		url: { type: String },
-		public_id: { type: String },
-	},
-	audio_en: {
-		width: { type: Number },
-		height: { type: Number },
-		url: { type: String },
-		public_id: { type: String },
-	},
-	audio_sasak: {
-		width: { type: Number },
-		height: { type: Number },
-		url: { type: String },
-		public_id: { type: String },
-	},
+	image: { type: String },
+	audio_id: { type: String },
+	audio_en: { type: String },
+	audio_sasak: { type: String },
 
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: Date.now },

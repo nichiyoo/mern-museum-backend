@@ -1,5 +1,5 @@
-const { handleUpload, handleDelete } = require('../libs/cloudinary');
 const Collection = require('../models/collection.model');
+const CloudinaryController = require('../controllers/cloudinary.controller');
 
 const index = async (req, res) => {
 	try {
@@ -44,23 +44,7 @@ const show = async (req, res) => {
 
 const store = async (req, res) => {
 	try {
-		const collection = new Collection({
-			...req.body,
-		});
-
-		const files = req.files;
-		const [image, audio_id, audio_en, audio_sasak] = await Promise.all([
-			handleUpload(collection._id, 'image', files.image),
-			handleUpload(collection._id, 'audio_id', files.audio_id),
-			handleUpload(collection._id, 'audio_en', files.audio_en),
-			handleUpload(collection._id, 'audio_sasak', files.audio_sasak),
-		]);
-
-		collection.image = image;
-		collection.audio_id = audio_id;
-		collection.audio_en = audio_en;
-		collection.audio_sasak = audio_sasak;
-
+		const collection = new Collection(req.body);
 		await collection.save();
 
 		res.status(201).json({
@@ -87,24 +71,25 @@ const update = async (req, res) => {
 			});
 		}
 
-		const files = req.files;
-		const [image, audio_id, audio_en, audio_sasak] = await Promise.all([
-			handleUpload(collection._id, 'image', files.image),
-			handleUpload(collection._id, 'audio_id', files.audio_id),
-			handleUpload(collection._id, 'audio_en', files.audio_en),
-			handleUpload(collection._id, 'audio_sasak', files.audio_sasak),
-		]);
+		const mapper = (key, value) => {
+			if (value === collection[key]) return;
+			return CloudinaryController.deleteSingle(collection[key]);
+		};
 
-		if (image) collection.image = image;
-		if (audio_id) collection.audio_id = audio_id;
-		if (audio_en) collection.audio_en = audio_en;
-		if (audio_sasak) collection.audio_sasak = audio_sasak;
+		const { image, audio_id, audio_en, audio_sasak, ...rest } = req.body;
+		const promises = [
+			mapper('image', image),
+			mapper('audio_id', audio_id),
+			mapper('audio_en', audio_en),
+			mapper('audio_sasak', audio_sasak),
+		];
 
-		await collection.save();
+		await Promise.all(promises.filter(Boolean));
+		const updated = await Collection.findByIdAndUpdate(id, req.body);
 
 		res.status(200).json({
 			message: 'Collection updated successfully.',
-			data: collection,
+			data: updated,
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -126,7 +111,13 @@ const destroy = async (req, res) => {
 			});
 		}
 
-		await handleDelete(collection._id.toString());
+		await CloudinaryController.deleteMultiple([
+			collection.image,
+			collection.audio_id,
+			collection.audio_en,
+			collection.audio_sasak,
+		]);
+
 		await Collection.findByIdAndDelete(id);
 
 		res.status(200).json({
